@@ -133,15 +133,24 @@ exports.updateInterview = async (req, res, next) => {
   try {
     let interview = await Interview.findById(req.params.id);
 
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: `No interview with id ${req.params.id}`
+      });
+    }
+
+    // Authorization check
     if (
-  interview.user.toString() !== req.user.id &&
-  req.user.role !== 'admin'
-) {
-  return res.status(401).json({
-    success: false,
-    message: `User ${req.user.id} is not authorized to update this interview`
-  });
-}
+      interview.user.toString() !== req.user.id &&
+      req.user.role !== 'admin'
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to update this interview`
+      });
+    }
+
     interview = await Interview.findByIdAndUpdate(
       req.params.id,
       req.body,

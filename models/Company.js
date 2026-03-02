@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Interview = require('./Interview');
 const CompanySchema = new mongoose.Schema(
   {
     name: {
@@ -41,9 +41,12 @@ CompanySchema.virtual('interviews', {
 });
 
 // Cascade delete interviews when a company is deleted
-CompanySchema.pre('deleteOne', { document: true, query: false }, async function(next) {
-  await this.constructor.collection.db.collection('interviews').deleteMany({ company: this._id });
-  next();
-});
+CompanySchema.pre(
+  'deleteOne',
+  { document: true, query: false },
+  async function () {
+    await Interview.deleteMany({ company: this._id });
+  }
+);
 
 module.exports = mongoose.model('Company', CompanySchema);
