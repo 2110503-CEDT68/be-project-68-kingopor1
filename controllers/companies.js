@@ -1,9 +1,9 @@
-const Hospital = require('../models/Hospital');
+const Company = require('../models/Company');
 
-// @desc    Get all hospitals
-// @route   GET /api/v1/hospitals
+// @desc    Get all companies
+// @route   GET /api/v1/companies
 // @access  Public
-exports.getHospitals = async (req, res, next) => {
+exports.getCompanies = async (req, res, next) => {
   try {
     let query;
 
@@ -23,7 +23,7 @@ exports.getHospitals = async (req, res, next) => {
     );
 
     // Finding resource
-    query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
+    query = Company.find(JSON.parse(queryStr)).populate('interviews');
 
     // Select
     if (req.query.select) {
@@ -45,12 +45,12 @@ exports.getHospitals = async (req, res, next) => {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
 
-    const total = await Hospital.countDocuments(JSON.parse(queryStr));
+    const total = await Company.countDocuments(JSON.parse(queryStr));
 
     query = query.skip(startIndex).limit(limit);
 
     // Execute query
-    const hospitals = await query;
+    const companies = await query;
 
     // Pagination result
     const pagination = {};
@@ -71,9 +71,9 @@ exports.getHospitals = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      count: hospitals.length,
+      count: companies.length,
       pagination,
-      data: hospitals
+      data: companies
     });
 
   } catch (err) {
@@ -83,35 +83,35 @@ exports.getHospitals = async (req, res, next) => {
     });
   }
 };
-exports.getHospital = async (req, res, next) => {
+exports.getCompany = async (req, res, next) => {
   try {
-    const hospital = await Hospital.findById(req.params.id);
+    const company = await Company.findById(req.params.id);
 
-    if (!hospital) {
+    if (!company) {
       return res.status(400).json({ success: false });
     }
 
     res.status(200).json({
       success: true,
-      data: hospital
+      data: company
     });
   } catch (err) {
     res.status(400).json({ success: false });
   }
 };
 
-exports.createHospital = async (req, res, next) => {
-  const hospital = await Hospital.create(req.body);
+exports.createCompany = async (req, res, next) => {
+  const company = await Company.create(req.body);
 
   res.status(201).json({
     success: true,
-    data: hospital
+    data: company
   });
 };
 
-exports.updateHospital = async (req, res, next) => {
+exports.updateCompany = async (req, res, next) => {
   try {
-    const hospital = await Hospital.findByIdAndUpdate(
+    const company = await Company.findByIdAndUpdate(
       req.params.id,
       req.body,
       {
@@ -120,33 +120,33 @@ exports.updateHospital = async (req, res, next) => {
       }
     );
 
-    if (!hospital) {
+    if (!company) {
       return res.status(400).json({ success: false });
     }
 
     res.status(200).json({
       success: true,
-      data: hospital
+      data: company
     });
   } catch (err) {
     res.status(400).json({ success: false });
   }
 };
 
-exports.deleteHospital = async (req, res, next) => {
+exports.deleteCompany = async (req, res, next) => {
   try {
-    const hospital = await Hospital.findById(req.params.id);
+    const company = await Company.findById(req.params.id);
 
-    if (!hospital) {
+    if (!company) {
       return res.status(404).json({
         success: false,
-        message: 'Hospital not found'
+        message: 'Company not found'
       });
     }
 
     //  This triggers cascade middleware
-    await hospital.deleteOne(); 
-    // or: await hospital.remove();
+    await company.deleteOne(); 
+    // or: await company.remove();
 
     res.status(200).json({
       success: true,
@@ -157,7 +157,7 @@ exports.deleteHospital = async (req, res, next) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: 'Cannot delete hospital'
+      message: 'Cannot delete company'
     });
   }
 };

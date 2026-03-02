@@ -2,7 +2,6 @@
 
 const express = require('express');
 const { register, login ,getMe} = require('../controllers/auth');
-const { route } = require('./hospitals');
 
 const router = express.Router();
 const {protect}= require('../middleware/auth');
